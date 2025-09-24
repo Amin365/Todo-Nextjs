@@ -5,6 +5,9 @@ import React from 'react'
 import { CreateTodoAction } from '../actions/create'
 // import { createTodoAction } from '../actions/create'
 
+export type Priority = {
+  priority: 'low' | 'medium' | 'high'
+}
 
 
 export default function NewTodo() {
@@ -44,7 +47,14 @@ export default function NewTodo() {
                             <p className="text-red-500 text-sm mt-2">{state.error}</p>
                         )} */}
                     </div>
-
+                    {/* priority selecter */}
+                 
+                  <select name="priority" className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="low">Low Priority</option>
+                    <option value="medium">Medium Priority</option>
+                    <option value="high">High Priority</option>
+                  </select>
+                    
                     <div className="flex gap-3">
                         <button
                             type="submit"

@@ -1,42 +1,38 @@
-
-
 import { UpdateTodoAction } from '@/app/actions/update';
 import { FetchbyID } from '@/app/lib/todos';
 import Link from 'next/link';
-// import { notFound } from 'next/navigation';
-// import { fetchTodoById } from '../../lib/todo';
-// import { updateTodoAction } from '../../actions/update';
-
-
 
 interface EditTodoPageProps {
   params: {
-    id: string;
+    id: string; // must match your folder name [id]
   };
 }
 
 export default async function EditTodoPage({ params }: EditTodoPageProps) {
-const todo = await FetchbyID(params.id);
+  const { id } = params;
 
-if (!todo) {
+  // Make sure FetchbyID can accept string id
+  const todo = await FetchbyID(id);
+
+  if (!todo) {
+    return (
+      <main className="max-w-2xl mx-auto mt-10 p-6">
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h1 className="text-2xl font-bold text-gray-800 mb-4">Todo Not Found</h1>
+          <Link
+            href="/"
+            className="text-blue-600 hover:text-blue-800 transition-colors"
+          >
+            ← Back to Todos
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="max-w-2xl mx-auto mt-10 p-6">
       <div className="bg-white rounded-lg shadow-md p-6">
-        <h1 className="text-2xl font-bold text-gray-800 mb-4">Todo Not Found</h1>
-        <Link
-          href="/"
-          className="text-blue-600 hover:text-blue-800 transition-colors"
-        >
-          ← Back to Todos
-        </Link>
-      </div>
-    </main>
-  );
-}
-
-return (
-  <main className="max-w-2xl mx-auto mt-10 p-6">
-    <div className="bg-white rounded-lg shadow-md p-6">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-gray-800">Edit Todo</h1>
           <Link
@@ -58,7 +54,7 @@ return (
               type="text"
               id="title"
               name="title"
-              defaultValue={todo.title.toString()}
+              defaultValue={todo.title?.toString()}
               placeholder="Enter your todo..."
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               required
@@ -68,19 +64,15 @@ return (
             <p className="text-xs text-gray-500 mt-1">Maximum 200 characters</p>
           </div>
 
-          <div className="bg-gray-50 p-3 rounded-md">
-            {/* <p className="text-sm text-gray-600">
-              <span className="font-medium">Status:</span> {todo.completed ? 'Completed' : 'Pending'}
-            </p> */}
-            {/* <p className="text-sm text-gray-600 mt-1">
-              <span className="font-medium">Created:</span> {new Date(todo.createdAt.toString()).toLocaleDateString()}
-            </p> */}
-            {/* {todo.updatedAt && (
-              <p className="text-sm text-gray-600 mt-1">
-                <span className="font-medium">Last updated:</span> {new Date(todo.updatedAt.toString()).toLocaleDateString()}
-              </p>
-            )} */}
-          </div>
+          <select
+            name="priority"
+            defaultValue={todo.priority}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          >
+            <option value="low">Low Priority</option>
+            <option value="medium">Medium Priority</option>
+            <option value="high">High Priority</option>
+          </select>
 
           <div className="flex gap-3">
             <button
@@ -101,5 +93,3 @@ return (
     </main>
   );
 }
-
-

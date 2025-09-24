@@ -1,17 +1,27 @@
-
-
-// import { fetchTodos } from './lib/todo';
-// import { toggleTodo } from './actions/toggle';
-// import { deleteTodo } from './actions/delete';
-
-
 import Link from 'next/link';
 import { fetchtodos } from './lib/todos';
 import { ToggleTodo } from './actions/toggle';
 import { DeleteTodo } from './actions/delete';
 
-export default async function Home() {
-  const todos = await fetchtodos();
+export default async function Home({ searchParams }: { searchParams?: { search?: string; filter?: string } }) {
+  const search = searchParams?.search || "";
+  const filter = searchParams?.filter || "all"; 
+
+  let todos = await fetchtodos();
+
+  // 🔍 Search filter
+  if (search) {
+    todos = todos.filter(todo =>
+      todo.title.toLowerCase().includes(search.toLowerCase())
+    );
+  }
+
+  if (filter === "completed") {
+    todos = todos.filter(todo => todo.completed);
+  } else if (filter === "pending") {
+    todos = todos.filter(todo => !todo.completed);
+  }
+
   const time = new Date().toLocaleTimeString();
 
   return (
@@ -20,36 +30,61 @@ export default async function Home() {
         <h1 className="text-3xl font-bold text-gray-800 mb-2">📝 Todo App</h1>
         <p className="text-sm text-gray-500 mb-4">Last updated: {time}</p>
 
-        <div className="mb-6">
-          <Link
-            href="/new"
-            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+        {/* 🔍 Search + Filter */}
+        <form className="flex items-center gap-3 mb-6">
+          <input
+            type="text"
+            name="search"
+            defaultValue={search}
+            placeholder="Search todos..."
+            className="flex-1 border rounded-md px-3 py-2 text-sm"
+          />
+
+          <select
+            name="filter"
+            defaultValue={filter}
+            className="border rounded-md px-3 py-2 text-sm"
           >
-            ➕ Add New Todo
-          </Link>
-        </div>
+            <option value="all">All</option>
+            <option value="completed">Completed</option>
+            <option value="pending">Pending</option>
+          </select>
+
+          <button
+            type="submit"
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+          >
+            Apply
+          </button>
+        </form>
 
         {todos.length === 0 ? (
           <div className="text-center py-8">
-            <p className="text-gray-500 text-lg">No todos yet!</p>
-            <p className="text-gray-400 text-sm mt-2">Create your first todo to get started.</p>
+            <p className="text-gray-500 text-lg">No todos found!</p>
           </div>
         ) : (
           <div className="space-y-3">
             {todos.map(todo => (
-              <div key={todo._id.toString()} className="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-lg p-4">
+              <div
+                key={todo._id.toString()}
+                className="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-lg p-4"
+              >
                 <div className="flex items-center space-x-3">
-                  <form action={ToggleTodo.bind(null, todo._id)}>
+                  <form action={ToggleTodo.bind(null, todo._id.toString())}>
                     <button
                       type="submit"
                       className="text-2xl hover:scale-110 transition-transform"
                       title={todo.completed ? "Mark as incomplete" : "Mark as complete"}
                     >
-                      {todo.completed ? '✅' : '⬜'}
+                      {todo.completed ? "✅" : "⬜"}
                     </button>
                   </form>
 
-                  <span className={`flex-1 text-lg ${todo.completed ? 'line-through text-gray-500' : 'text-gray-800'}`}>
+                  <span
+                    className={`flex-1 text-lg ${
+                      todo.completed ? "line-through text-gray-500" : "text-gray-800"
+                    }`}
+                  >
                     {todo.title}
                   </span>
                 </div>

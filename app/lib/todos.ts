@@ -25,7 +25,7 @@ export async function fetchtodos():Promise<Todo[]>{
 }
      
 
-export async function FetchbyID(id: String): Promise<Todo | null> {
+export async function FetchbyID(id: string): Promise<Todo | null> {
     try {
         const collection = await getCollection();
         const todo = await collection.findOne({ _id: new ObjectId(id as string) });
@@ -43,21 +43,21 @@ export async function FetchbyID(id: String): Promise<Todo | null> {
 }
 
 
-export async function CreateTodo(Todo:CreateTodoInput):Promise<string>{
+export async function CreateTodo(Todo:CreateTodoInput, priority: 'low' | 'medium' | 'high'):Promise<string>{
     try {
         
         const collection =await getCollection()
-        const result =await collection.insertOne(Todo)
+        const result =await collection.insertOne({...Todo, priority})
         return result.insertedId.toString()
     } catch (error) {
         return ""
     }
 }
 
-export async function updateTodo(id:String,Todo:UpdatedTodoInpu):Promise<boolean>{
+export async function updateTodo(id:string,Todo:UpdatedTodoInpu, priority: 'low' | 'medium' | 'high'):Promise<boolean>{
     try {
         const collection =await getCollection()
-        const result =await collection.updateOne({_id:new ObjectId(id as string)},{$set:Todo})
+        const result =await collection.updateOne({_id:new ObjectId(id as string)},  { $set: { ...Todo, priority } })
         return result.modifiedCount > 0
     } catch (error) {
         return false

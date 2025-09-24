@@ -6,13 +6,13 @@ import { FetchbyID, updateTodo } from "../lib/todos";
 
 
 
-export async function ToggleTodo(id:String){
+export async function ToggleTodo(id:string){
     const todo = await FetchbyID(id)
     if(!todo){
         return
     }
 
-    const success= await updateTodo(id,{completed:!todo.completed})
+    const success= await updateTodo(id, { completed: !todo.completed }, todo.priority||'low')
     if(!success){
         console.error('failed to update todo')
         return 

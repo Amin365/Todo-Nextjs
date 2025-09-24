@@ -7,6 +7,7 @@ import { redirect } from "next/navigation"
 
 export async function CreateTodoAction(formData:FormData){
     const title = formData.get('title') as string 
+    const priority = formData.get('priority') as 'low' | 'medium' | 'high' || 'low'
     if(!title||title.trim().length===0){
         console.error('Title Required')
         return
@@ -16,7 +17,7 @@ export async function CreateTodoAction(formData:FormData){
         return
     }
 
-    const todoID= await CreateTodo({title:title.trim()})
+    const todoID= await CreateTodo({title: title.trim(), priority}, priority)
     if(!todoID){
         console.error('failed to create todo')
         return

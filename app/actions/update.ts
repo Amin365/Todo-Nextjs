@@ -9,6 +9,7 @@ import { redirect } from "next/navigation"
 export async function UpdateTodoAction(formData:FormData){
     const id=formData.get('id') as string
     const title =formData.get('title') as string
+  const priority = formData.get('priority') as 'low' | 'medium' | 'high' || 'low'
 
     if(!id){
         console.error("ID is required")
@@ -33,7 +34,7 @@ export async function UpdateTodoAction(formData:FormData){
         return
     }
 
-    const sucess=await updateTodo(id,{title:title.trim()})
+    const sucess=await updateTodo(id, { title: title.trim() },priority )
 
     if(!sucess){
         console.error('Failed to Update Todo')
